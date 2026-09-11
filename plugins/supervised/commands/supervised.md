@@ -21,11 +21,12 @@ What survives is real but narrower:
 3. **A different model** — different scale and generation decorrelate *some*
    errors. Treat this as a bonus, not the thesis.
 
-The load-bearing part is neither: it is the **base-rate section of the
-reviewer's contract**, which names defects THIS codebase actually produced. No
-model of any vendor looks for those unprompted. If you have not filled in
-`.claude/REVIEW_BASE_RATES.md` for this repo, the reviews will be generic —
-see the plugin README.
+The load-bearing part is neither: it is the **base rates** — the defects THIS
+codebase has actually produced. No model of any vendor looks for those
+unprompted. You do not have to write them: §5 makes you append every CONFIRMED
+finding to `.claude/REVIEW_BASE_RATES.md`, so the file builds itself as you use
+this. It starts empty and the reviews start generic; they get sharper with
+every phase.
 
 <plan-arg>$ARGUMENTS</plan-arg>
 
@@ -142,6 +143,14 @@ Agent(subagent_type: "general-purpose", model: "fable", run_in_background: true,
 `model:` overrides the model in agent frontmatter, so it is also how you force a
 particular reviewer model for a one-off review without an agent file at all.
 
+**If the reviewer model is unavailable on this account**, the call fails rather
+than silently downgrading. Retry once with no `model:` override, and then SAY
+so in one line: *"Reviewer ran on the same model as the executor — you are
+getting fresh context and no authoring commitment, but not model diversity."*
+A same-model review with a clean context is still worth most of what this
+method claims (see the top of this file); silently pretending it was
+cross-model is not.
+
 **The prompt must carry**, or the review is worth little:
 1. `Read your contract in full first` (the agent file, if invoked by reference).
 2. The plan path, and which phase/section is under review.
@@ -187,6 +196,22 @@ direction of pairing lifted the pass rate 71.6% → 89.7% while the reverse
 direction DROPPED it 91.4% → 82.8%, i.e. worse than no review at all. Whether
 YOUR pairing is a good direction is an empirical question about *those* two
 models on *this* codebase, and the tally is the only measurement of it.
+
+## Feed the base rates — one line, automatic
+
+Every finding you mark CONFIRMED goes in `.claude/REVIEW_BASE_RATES.md` too.
+Create the file if it does not exist. One line each:
+
+    - <class>: <the shape, one sentence> — seen: <phase/date>. Ask: <the question that catches the next one>
+
+This is the whole of the configuration this method needs, and it costs you
+nothing because you just reproduced the finding anyway. The reviewer reads that
+file before its own generic classes, so the second review of a repo is sharper
+than the first and the tenth is sharper again. A repo that has run this for a
+month has a defect taxonomy nobody had to sit down and write.
+
+Do NOT add REFUTED findings. The file is a record of what actually went wrong,
+not of what a reviewer once suspected.
 
 **Act on the tally.** If REFUTED meets or beats CONFIRMED across ~5 phases, the
 reviews are buying misdiagnoses at 150-250k tokens each: say so plainly, stop

@@ -2,11 +2,10 @@
 
 A Claude Code plugin marketplace.
 
-## Install
+## Install — one line, nothing to configure
 
-```
-/plugin marketplace add alonsorobots/claude-code-supervised
-/plugin install supervised@supervised-tools
+```sh
+claude plugin marketplace add alonsorobots/claude-code-supervised && claude plugin install supervised@supervised-tools
 ```
 
 ## Plugins
@@ -23,9 +22,13 @@ assuming it.
 /supervised ~/.claude/plans/my-plan.md
 ```
 
-See the [plugin README](plugins/supervised/) for what to customise before it is
-worth much (short answer: your own base rates), and for the honest caveat about
-how much "independence" two models from the same lab actually give you.
+Works out of the box. It learns your codebase's real defect patterns as you use
+it, by appending every confirmed finding to `.claude/REVIEW_BASE_RATES.md` — so
+the fifth review is sharper than the first without anyone configuring anything.
+
+See the [plugin README](plugins/supervised/) for the honest caveat about how
+much "independence" two models from the same lab actually give you, and for the
+ledger that will tell you to stop using this if it stops paying off.
 
 ## License
 

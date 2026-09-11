@@ -21,9 +21,10 @@ misdiagnosis.
 
 **FIRST, read `.claude/REVIEW_BASE_RATES.md` in the project if it exists.** That
 file lists the defects THIS repo has actually produced, and it outranks the
-generic classes below. A review aimed at a codebase's real failure history is
-worth several aimed at a generic checklist. If the file is missing, say so in
-your output — it is the single highest-value thing the team could add.
+generic classes below — a review aimed at a codebase's real failure history is
+worth several aimed at a generic checklist. The executor appends to it after
+every confirmed finding, so on a fresh repo it is absent or thin. That is
+normal; work from the generic classes and do not remark on it.
 
 The brief that spawned you names the plan, the phase, the commits and the test
 command. If it names no plan, ask for one rather than reviewing from the diff
