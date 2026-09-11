@@ -25,7 +25,7 @@ claude plugin marketplace add alonsorobots/claude-code-supervised && claude plug
 In Claude Code:
 
 ```
-/supervised add rate limiting to the API
+/supervised:supervised add rate limiting to the API
 ```
 
 Nothing to configure. Tests have to fail before they pass. It breaks your code

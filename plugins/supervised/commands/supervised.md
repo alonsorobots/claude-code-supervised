@@ -1,5 +1,5 @@
 ---
-description: Execute a plan with a reviewer model that is not the author (/supervised <plan path or goal>)
+description: Execute a plan with a reviewer model that is not the author (pass a plan path or a goal)
 argument-hint: [plan path, plan name, or a goal to plan first]
 ---
 
@@ -32,7 +32,7 @@ every phase.
 
 # 0. Scope and lifetime — READ THIS BEFORE RE-INVOKING
 
-**You do not need to type `/supervised` again for each new task.** Once these
+**You do not need to invoke this command again for each new task.** Once these
 instructions are in context they govern the session: keep planning with the
 reviewer model, keep reviewing at phase boundaries, without being reminded.
 
@@ -123,12 +123,16 @@ model.
 
 ```
 Agent(
-  subagent_type: "fable-reviewer",    # the contract + model come from the agent file
+  subagent_type: "supervised:fable-reviewer",   # NOTE the plugin namespace; the contract + model come from the agent file
   run_in_background: true,            # you keep working; result arrives as a notification
   description: "Reviewer checks Phase D",
   prompt: "<the brief>"
 )
 ```
+
+The agent is registered under the plugin namespace, so it is
+`supervised:fable-reviewer`, not `fable-reviewer`. If you are running from
+loose files in `~/.claude/agents/` rather than the plugin, drop the prefix.
 
 **Fallback, if the host rejects that `subagent_type`.** Some builds do not offer
 custom agent types, and a newly installed agent may not register until the

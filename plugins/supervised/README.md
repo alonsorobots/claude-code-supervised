@@ -31,13 +31,16 @@ That's the whole setup. Nothing to configure.
 In Claude Code, type:
 
 ```
-/supervised add rate limiting to the API
+/supervised:supervised add rate limiting to the API
 ```
+
+(Claude Code prefixes plugin commands with the plugin name. Start typing
+`/super` and it'll autocomplete.)
 
 Or point it at a plan file you already have:
 
 ```
-/supervised ~/.claude/plans/my-plan.md
+/supervised:supervised ~/.claude/plans/my-plan.md
 ```
 
 Then leave it alone. It works through the job in phases and checks itself at
