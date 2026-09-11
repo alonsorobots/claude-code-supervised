@@ -1,96 +1,68 @@
 # supervised
 
-A working method for agentic coding where **being confidently wrong is
-expensive**: one model plans and reviews, another executes, gates are written
-red before they are implemented and mutation-checked afterwards, and every
-review finding is reproduced and recorded so you can tell whether the review is
-earning its cost.
+Two models instead of one. One writes the code, a different one checks it.
 
-## Install — one line
+Use it when being wrong would be expensive and wouldn't be obvious.
+
+## Install
 
 ```sh
 claude plugin marketplace add alonsorobots/claude-code-supervised && claude plugin install supervised@supervised-tools
 ```
 
-Then, in any session:
+Then:
 
 ```
-/supervised ~/.claude/plans/my-plan.md     # or: /supervised <a goal, to plan first>
+/supervised <a plan file, or just tell it what you want>
 ```
 
-That is the whole setup. **There is nothing to configure.**
+Nothing to configure. That's it.
 
-## What it does
+## What it actually does
 
-- `/supervised` — the method: phased execution, gate-first, mutation-checked,
-  with an explicit "when this is NOT worth paying for" table so it stops you
-  spending a review on a rename.
-- `fable-reviewer` — an adversarial review agent that runs on a different model,
-  reads diffs and RUNS commands, and is forbidden from reviewing off a summary.
+**The checker never saw how the code got written.** So it can't nod along with
+a bad idea it already agreed to. That's most of the value.
 
-## It configures itself
+**Tests have to fail first.** It writes the test, runs it, shows you it's red,
+*then* writes the code. A test that was never red might be testing nothing.
 
-The thing that makes review worth paying for is **base rates**: the defects
-*your* codebase actually produces. A reviewer with a generic checklist finds
-generic things.
+**Then it breaks your code on purpose.** If the test still passes, the test is
+fake and it says so. This catches the thing that bites everyone: green tests
+that were never going to go red.
 
-You do not write those. Every finding the executor confirms gets appended to
-`.claude/REVIEW_BASE_RATES.md` in your repo as one line, as a byproduct of
-reproducing it — which it was going to do anyway. The reviewer reads that file
-before its own generic classes. So the first review is generic, the fifth knows
-your repo, and nobody ever sat down to write a taxonomy.
+**It keeps score on the checker.** Every complaint the reviewer makes gets
+reproduced before anything is fixed, and logged as real or wrong. If the
+reviewer turns out to be mostly wrong, it tells you to stop using it. It'll
+happily fire itself.
 
-If you *want* a head start, `REVIEW_BASE_RATES.template.md` in this plugin
-explains how to seed it by hand. Entirely optional.
+**It learns your bugs.** Every real bug goes in a file in your repo. Next time,
+the reviewer reads that first. Your fifth review is noticeably better than your
+first, and you didn't do anything.
 
-## The reviewer model
+**It tells you when not to bother.** Renaming stuff? Small obvious fix? It says
+"this isn't worth a review" and just does it. A review costs real money, so it
+doesn't spend one on a typo.
 
-`agents/fable-reviewer.md` declares `model: fable`. If your account cannot reach
-that model the command retries without the override and tells you the review ran
-same-model — it degrades out loud rather than silently. Change the frontmatter
-to any model you prefer.
+**It notices when it forgets itself.** Long sessions get summarized and
+instructions quietly fall out. It leaves a note in your plan file so it can spot
+that it's happened and go re-read the rules.
 
-## The honest caveat about "independence"
+## One honest thing
 
-If the executor and the reviewer come from the same lab (e.g. Opus executing,
-Fable reviewing — both Anthropic), you are NOT getting decorrelated blind spots.
-Shared pretraining lineage and post-training mean the two models fail in similar
-ways. What you still get, and it is worth real money:
+If both models come from the same company, they're wrong in similar ways. You're
+not getting truly independent eyes — you're getting eyes that didn't watch the
+code get written. Still useful, just less than it sounds.
 
-1. **Fresh context** — the reviewer never saw the reasoning that produced the
-   code, so it cannot inherit a wrong premise by having already agreed to it.
-2. **No authoring commitment** — it is not defending work it wrote.
-3. **A different model** — decorrelates *some* errors. A bonus, not the thesis.
+There's [a study](https://arxiv.org/abs/2607.21656) where one model checking
+another made things clearly better in one direction, and *worse than no check at
+all* in the other. Which is exactly why this thing keeps score instead of
+assuming it's helping.
 
-A 116-task controlled study ([arXiv:2607.21656](https://arxiv.org/abs/2607.21656))
-found cross-model review is **asymmetric and can be net negative**: one
-direction lifted pass rates 71.6% → 89.7%, the reverse dropped them
-91.4% → 82.8% — worse than no review at all.
+## Tweaks (optional, skip this)
 
-Which is why the method carries a ledger.
+- Reviewer runs on Fable. Don't have it? It falls back and tells you. Or change
+  `model:` in `agents/fable-reviewer.md`.
+- Want to hand-write the bug list instead of letting it build up? See
+  `REVIEW_BASE_RATES.template.md`.
 
-## The ledger
-
-Every finding is reproduced before it is fixed and recorded as `CONFIRMED` /
-`REFUTED` / `UNVERIFIED` with the command and output that settled it, plus a
-running tally. If REFUTED meets or beats CONFIRMED over ~5 phases, the reviews
-are buying misdiagnoses at 150-250k tokens each and the method tells you to stop
-paying.
-
-Supervision is itself a control, and an unmeasured control is the exact thing
-this method exists to distrust. As far as I know this is the only tool of its
-kind that will tell you to stop using it.
-
-## Prior art
-
-Nothing here is novel in isolation, and it helps to know the names: this is
-**generator–critic / actor–critic** review (the argument being correlated error
-in self-review), applied to **spec-driven development** with phase gates (cf.
-GitHub Spec Kit), where each gate is red-first (**TDD**) and then
-**mutation-tested** (Lipton 1971; DeMillo, Lipton & Sayward 1978). The
-combination — plus self-accruing base rates and a precision ledger — is the part
-that is hard to find off the shelf.
-
-## License
-
-MIT.
+MIT. Take it, change it.
