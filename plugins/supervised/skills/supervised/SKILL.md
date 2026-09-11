@@ -1,6 +1,8 @@
 ---
-description: Execute a plan with a reviewer model that is not the author (pass a plan path or a goal)
+name: supervised
+description: Execute a phased plan with the review run on a second model that did not write the code. Use for work where a wrong answer would look plausible and be expensive: deployed or irreversible changes, novel algorithms with no reference implementation, numbers someone will quote. Not for renames, formatting, or anything a test suite already catches.
 argument-hint: [plan path, plan name, or a goal to plan first]
+disable-model-invocation: true
 ---
 
 Execute work under supervision: **the reviewer model plans and reviews, the
