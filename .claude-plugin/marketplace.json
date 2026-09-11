@@ -1,0 +1,23 @@
+{
+  "name": "supervised-tools",
+  "owner": {
+    "name": "alonsorobots",
+    "url": "https://github.com/alonsorobots"
+  },
+  "description": "Working methods for agentic coding where being confidently wrong is expensive.",
+  "plugins": [
+    {
+      "name": "supervised",
+      "source": "./plugins/supervised",
+      "displayName": "Supervised execution",
+      "description": "Execute a phased plan with one model planning and reviewing and another executing, with gates that are mutation-checked and a ledger that measures whether the review is worth its cost.",
+      "version": "1.0.0",
+      "author": { "name": "alonsorobots" },
+      "homepage": "https://github.com/alonsorobots/claude-code-supervised",
+      "repository": "https://github.com/alonsorobots/claude-code-supervised",
+      "license": "MIT",
+      "category": "workflow",
+      "keywords": ["review", "planning", "verification", "multi-model", "tdd", "mutation-testing"]
+    }
+  ]
+}

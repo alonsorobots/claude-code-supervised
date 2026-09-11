@@ -1,0 +1,13 @@
+{
+  "name": "supervised",
+  "version": "1.0.0",
+  "description": "Execute a phased plan with a reviewer that is not the author: /supervised <plan path or goal>. Gates are written red first and mutation-checked; every review finding is adjudicated and tallied so the method measures its own worth.",
+  "author": {
+    "name": "alonsorobots",
+    "url": "https://github.com/alonsorobots"
+  },
+  "homepage": "https://github.com/alonsorobots/claude-code-supervised",
+  "repository": "https://github.com/alonsorobots/claude-code-supervised",
+  "license": "MIT",
+  "keywords": ["review", "planning", "verification", "multi-model", "tdd", "mutation-testing"]
+}
